@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import winston from 'winston';
 import cors from 'cors';
 
@@ -22,6 +23,21 @@ global.logger = winston.createLogger({
       new (winston.transports.File)({ filename: 'grades-control.log' }),
   ]
 });
+
+(async () => {
+  try {
+    await mongoose.connect(
+      'mongodb+srv://admin:admin123@accountsigti.d8hea.mongodb.net/AccountsDB',
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      }
+    );
+    logger.info('MongoDB connected!')
+  } catch (error) {
+    logger.info('Error connecting to MongoDB' + error)
+  }
+})();
 
 app.use(express.json());
 app.use(cors());

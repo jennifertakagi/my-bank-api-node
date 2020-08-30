@@ -22,6 +22,6 @@ const accountSchema = mongoose.Schema({
   }
 });
 
-const accountModel = moongose.model('accounts', accountSchema, 'accounts');
+const accountModel = mongoose.model('accounts', accountSchema, 'accounts');
 
 export {accountModel};
