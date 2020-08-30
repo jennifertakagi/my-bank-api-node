@@ -14,7 +14,7 @@ class AccountController {
 
       validateRequestParams({account, agency, balance});
 
-      const accountDB = await validateAccountExists(accountModel, {account});
+      const accountDB = await validateAccountExists(accountModel, {account, agency});
       const updateData = {
         '$inc': {
           'balance': balance
@@ -43,7 +43,7 @@ class AccountController {
 
       validateRequestParams({account, agency, balance});
 
-      const accountDB = await validateAccountExists(accountModel, {account});
+      const accountDB = await validateAccountExists(accountModel, {account, agency});
       const TAX_WITHDRAWAL = 1;
       const newBalance = accountDB.balance - TAX_WITHDRAWAL - balance;
 
@@ -111,6 +111,25 @@ class AccountController {
   }
 
   /**
+   * Transfers the biggest clients of each agency to agency 99
+   * @param {Object} req request object
+   * @param {Object} res response object
+   * @param {Function} next next function
+  */
+  async transferBiggest(req, res, next) {
+    try {
+      const queryGroup = {'$group':{'_id':'$agency', biggestClient : {'$max' : '$balance'}}};
+      const maxByAgency = await accountModel.aggregate([queryGroup]);
+      console.log(maxByAgency)
+      //res.send(`New origin balance: ${updatedAccountOriginDB.balance}`);
+
+      //logger.info(`POST /account/transfer - Origin: ${JSON.stringify()`);
+    } catch (error) {
+        next(error);
+    }
+  }
+
+  /**
    * Gets the balance to account
    * @param {Object} req request object
    * @param {Object} res response object
@@ -122,7 +141,7 @@ class AccountController {
 
       validateRequestParams({account, agency});
 
-      const accountDB = await validateAccountExists(accountModel, {account});
+      const accountDB = await validateAccountExists(accountModel, {account, agency});
 
       res.send(`The balance is: ${formattedCurrency(accountDB.balance)}`);
 
@@ -185,21 +204,47 @@ class AccountController {
    * @param {Object} res response object
    * @param {Function} next next function
   */
- async getBiggestBalance(req, res, next) {
-  try {
-    let { limit } = req.body;
+  async getBiggestBalance(req, res, next) {
+    try {
+      let { limit } = req.body;
 
-    validateRequestParams({limit});
+      validateRequestParams({limit});
 
-    const biggestBalance = await accountModel.find({}, {_id: 0}).sort({balance: -1}).limit(limit)
+      const biggestBalance = await accountModel.find({}, {_id: 0}).sort({balance: -1}).limit(limit)
 
-    res.send(`The smaller clients are: ${JSON.stringify(biggestBalance)}`);
+      res.send(`The smaller clients are: ${JSON.stringify(biggestBalance)}`);
 
-    logger.info(`GET /account/biggestBalance - ${JSON.stringify(biggestBalance)}`);
-  } catch (error) {
-      next(error);
+      logger.info(`GET /account/biggestBalance - ${JSON.stringify(biggestBalance)}`);
+    } catch (error) {
+        next(error);
+    }
   }
-}
+
+  /**
+   * Deletes the account
+   * @param {Object} req request object
+   * @param {Object} res response object
+   * @param {Function} next next function
+  */
+  async deleteAccount(req, res, next) {
+    try {
+      let { account, agency } = req.body;
+
+      validateRequestParams({account, agency});
+
+      const accountDB = await validateAccountExists(accountModel, {account, agency});
+      await accountModel.deleteOne({_id: accountDB._id});
+
+      const queryMatch = {'$match': {agency}};
+      const sumByAgency = await accountModel.aggregate([queryMatch, {'$count': 'active_accounts'}]);
+
+      res.send(`The number of active accounts: ${JSON.stringify(sumByAgency.active_accounts)}`);
+
+      logger.info(`GET /account/deleteAccount - ${JSON.stringify(sumByAgency.active_accounts)}`);
+    } catch (error) {
+        next(error);
+    }
+  }
 }
 
 /**
