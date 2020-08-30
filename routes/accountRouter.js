@@ -3,4 +3,11 @@ import AccountController from '../controller/AccountController.js';
 
 const router = express.Router();
 
+router.post("/deposit", AccountController.makeDeposit);
+
+router.use((error, req, res, next) => {
+  logger.error(`${req.method} ${req.baseUrl} ${error.message}`);
+  res.status(400).send({ error: error.message});
+});
+
 export default router;

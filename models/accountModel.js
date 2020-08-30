@@ -17,7 +17,8 @@ const accountSchema = mongoose.Schema({
   },
   balance: {
     type: Number,
-    require: true
+    require: true,
+    min: 0
   }
 });
 

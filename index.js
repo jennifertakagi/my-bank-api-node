@@ -25,7 +25,7 @@ global.logger = winston.createLogger({
 
 app.use(express.json());
 app.use(cors());
-app.use('/accounts', accountRouter);
+app.use('/account', accountRouter);
 
 app.listen(3031, async () => {
     try {
