@@ -64,7 +64,7 @@ class AccountController {
     }
   }
 
-    /**
+  /**
    * Makes transfer between accounts,
    * update the destination account's balance
    * @param {Object} req request object
@@ -111,8 +111,7 @@ class AccountController {
   }
 
   /**
-   * Makes withdrawal according to account, and
-   * update the account's balance
+   * Gets the balance to account
    * @param {Object} req request object
    * @param {Object} res response object
    * @param {Function} next next function
@@ -128,6 +127,31 @@ class AccountController {
       res.send(`The balance is: ${formattedCurrency(accountDB.balance)}`);
 
       logger.info(`GET /account/balance - ${JSON.stringify(accountDB.balance)}`);
+    } catch (error) {
+        next(error);
+    }
+  }
+
+  /**
+   * Gets the balance's mean by agency
+   * @param {Object} req request object
+   * @param {Object} res response object
+   * @param {Function} next next function
+  */
+  async getMeanByAgency(req, res, next) {
+    try {
+      let { agency } = req.body;
+
+      validateRequestParams({agency});
+
+      const queryMatch = {'$match': {agency}};
+      const queryGroup = {'$group':{'_id':'$agency', averageBalance : {'$avg' : '$balance'}}};
+      const meanByAgency = await accountModel.aggregate([queryMatch, queryGroup]);
+      const meanBalance = meanByAgency && meanByAgency.length && meanByAgency[0]
+
+      res.send(`The balance's mean of the agency ${agency} is: ${meanBalance.averageBalance}`);
+
+      logger.info(`GET /account/balance - ${JSON.stringify(meanBalance.averageBalance)}`);
     } catch (error) {
         next(error);
     }
