@@ -3,8 +3,10 @@ import AccountController from '../controller/AccountController.js';
 
 const router = express.Router();
 
-router.post("/deposit", AccountController.makeDeposit);
-router.post("/withdrawal", AccountController.makeWithdrawal);
+router.patch("/deposit", AccountController.makeDeposit);
+router.patch("/withdrawal", AccountController.makeWithdrawal);
+router.patch("/transfer", AccountController.makeTransfer);
+
 router.get("/balance", AccountController.getBalance);
 
 router.use((error, req, res, next) => {
