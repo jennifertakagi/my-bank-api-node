@@ -9,6 +9,7 @@ router.patch('/transfer', AccountController.makeTransfer);
 
 router.get('/balance', AccountController.getBalance);
 router.get('/meanByAgency', AccountController.getMeanByAgency);
+router.get('/smallerBalance', AccountController.getSmallerBalance);
 
 router.use((error, req, res, next) => {
   logger.error(`${req.method} ${req.baseUrl} ${error.message}`);

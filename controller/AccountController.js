@@ -151,7 +151,29 @@ class AccountController {
 
       res.send(`The balance's mean of the agency ${agency} is: ${meanBalance.averageBalance}`);
 
-      logger.info(`GET /account/balance - ${JSON.stringify(meanBalance.averageBalance)}`);
+      logger.info(`GET /account/meanByAgency - ${JSON.stringify(meanBalance.averageBalance)}`);
+    } catch (error) {
+        next(error);
+    }
+  }
+
+    /**
+   * Gets the smaller client considering your balance
+   * @param {Object} req request object
+   * @param {Object} res response object
+   * @param {Function} next next function
+  */
+  async getSmallerBalance(req, res, next) {
+    try {
+      let { limit } = req.body;
+
+      validateRequestParams({limit});
+
+      const smallerBalance = await accountModel.find({}, {_id: 0, name: 0}).sort({balance: 1}).limit(limit)
+
+      res.send(`The smaller clients are: ${JSON.stringify(smallerBalance)}`);
+
+      logger.info(`GET /account/smallerBalance - ${JSON.stringify(smallerBalance)}`);
     } catch (error) {
         next(error);
     }
@@ -177,14 +199,8 @@ function validateRequestParams(...params) {
  * @param {String} account account identifier
  * @returns {Object} index of user, if it does not exits returns -1
  */
-async function validateAccountExists(accountModel, query, unique = true) {
-  let accountDB = null;
-
-  if (!unique) {
-    accountDB =  await accountModel.find(query);
-  } else {
-    accountDB =  await accountModel.findOne(query);
-  }
+async function validateAccountExists(accountModel, query) {
+  const accountDB = await accountModel.findOne(query);
 
   if (!accountDB) {
     throw new Error(`The account ${query.account} doesn't exist!`);
