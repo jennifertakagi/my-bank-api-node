@@ -4,6 +4,7 @@ import AccountController from '../controller/AccountController.js';
 const router = express.Router();
 
 router.post("/deposit", AccountController.makeDeposit);
+router.post("/withdrawal", AccountController.makeWithdrawal);
 
 router.use((error, req, res, next) => {
   logger.error(`${req.method} ${req.baseUrl} ${error.message}`);

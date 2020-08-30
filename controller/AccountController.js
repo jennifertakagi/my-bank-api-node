@@ -25,7 +25,7 @@ class AccountController {
       const query = { _id: accountDB._id} ;
       const update = {
         "$inc": {
-          "balance": -balance
+          "balance": balance
         }
       };
       const options = { new: true };
