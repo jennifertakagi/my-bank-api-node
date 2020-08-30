@@ -40,51 +40,51 @@ class AccountController {
     }
   }
 
-    /**
+  /**
    * Makes withdrawal according to account, and
    * update the account's balance
    * @param {Object} req request object
    * @param {Object} res response object
    * @param {Function} next next function
   */
- async makeWithdrawal(req, res, next) {
-  try {
-    let { agency, account, balance } = req.body;
+  async makeWithdrawal(req, res, next) {
+    try {
+      let { agency, account, balance } = req.body;
 
-    if (!account || !agency ||  !balance) {
-      throw new Error('These parameters are required: account, agency, balance!');
-    }
-
-    const accountDB = await accountModel.findOne({'account': account})
-
-    if (!accountDB) {
-      throw new Error(`The account ${account} doesn't exist!`);
-    }
-
-    const taxWithdrawal = 1;
-    const newBalance = accountDB.balance - taxWithdrawal - balance;
-
-    if (newBalance < 0) {
-      throw new Error('There is not enough balance!');
-    }
-
-    const query = { _id: accountDB._id} ;
-    const update = {
-      "$set": {
-        "balance": newBalance
+      if (!account || !agency ||  !balance) {
+        throw new Error('These parameters are required: account, agency, balance!');
       }
-    };
-    const options = { new: true };
 
-    const updatedAccountDB = await accountModel.findByIdAndUpdate(query, update, options)
+      const accountDB = await accountModel.findOne({'account': account})
 
-    res.send(`New balance: ${updatedAccountDB.balance}`);
+      if (!accountDB) {
+        throw new Error(`The account ${account} doesn't exist!`);
+      }
 
-    logger.info(`POST /account/withdrawal - ${JSON.stringify(updatedAccountDB.balance)}`);
-  } catch (error) {
-      next(error);
+      const taxWithdrawal = 1;
+      const newBalance = accountDB.balance - taxWithdrawal - balance;
+
+      if (newBalance < 0) {
+        throw new Error('There is not enough balance!');
+      }
+
+      const query = { _id: accountDB._id} ;
+      const update = {
+        "$set": {
+          "balance": newBalance
+        }
+      };
+      const options = { new: true };
+
+      const updatedAccountDB = await accountModel.findByIdAndUpdate(query, update, options)
+
+      res.send(`New balance: ${updatedAccountDB.balance}`);
+
+      logger.info(`POST /account/withdrawal - ${JSON.stringify(updatedAccountDB.balance)}`);
+    } catch (error) {
+        next(error);
+    }
   }
-}
 }
 
 export default new AccountController;
