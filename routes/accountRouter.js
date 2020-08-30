@@ -3,11 +3,11 @@ import AccountController from '../controller/AccountController.js';
 
 const router = express.Router();
 
-router.patch("/deposit", AccountController.makeDeposit);
-router.patch("/withdrawal", AccountController.makeWithdrawal);
-router.patch("/transfer", AccountController.makeTransfer);
+router.patch('/deposit', AccountController.makeDeposit);
+router.patch('/withdrawal', AccountController.makeWithdrawal);
+router.patch('/transfer', AccountController.makeTransfer);
 
-router.get("/balance", AccountController.getBalance);
+router.get('/balance', AccountController.getBalance);
 
 router.use((error, req, res, next) => {
   logger.error(`${req.method} ${req.baseUrl} ${error.message}`);

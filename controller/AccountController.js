@@ -16,8 +16,8 @@ class AccountController {
 
       const accountDB = await validateAccountExists(accountModel, {account});
       const updateData = {
-        "$inc": {
-          "balance": balance
+        '$inc': {
+          'balance': balance
         }
       };
       const updatedAccountDB = await updateAccountById(accountDB, updateData)
@@ -50,8 +50,8 @@ class AccountController {
       checkBalanceLimit(newBalance);
 
       const updateData = {
-        "$set": {
-          "balance": newBalance
+        '$set': {
+          'balance': newBalance
         }
       };
       const updatedAccountDB = await updateAccountById(accountDB, updateData)
@@ -98,8 +98,8 @@ class AccountController {
       checkBalanceLimit(newOriginBalance)
 
       const newDestinationBalance = accountDestinationDB.balance + valueTransfer;
-      const updatedAccountDestinationDB = await updateAccountById(accountDestinationDB, {"$set": {"balance": newDestinationBalance}});
-      const updatedAccountOriginDB = await updateAccountById(accountOriginDB, {"$set": {"balance": newOriginBalance}});
+      const updatedAccountDestinationDB = await updateAccountById(accountDestinationDB, {'$set': {'balance': newDestinationBalance}});
+      const updatedAccountOriginDB = await updateAccountById(accountOriginDB, {'$set': {'balance': newOriginBalance}});
 
       res.send(`New origin balance: ${updatedAccountOriginDB.balance}`);
 
@@ -198,7 +198,7 @@ function checkBalanceLimit(balance, limit = 0) {
  * @returns {String} formatted as currency
  */
 function formattedCurrency(value) {
-	return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+	return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
 /**
