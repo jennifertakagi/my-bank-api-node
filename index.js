@@ -27,7 +27,7 @@ global.logger = winston.createLogger({
 (async () => {
   try {
     await mongoose.connect(
-      'mongodb+srv://admin:admin123@accountsigti.d8hea.mongodb.net/AccountsDB',
+      'mongodb+srv://admin:admin123@accountsigti.d8hea.mongodb.net/MyBankDB',
       {
         useNewUrlParser: true,
         useUnifiedTopology: true

@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
 
 const accountSchema = mongoose.Schema({
-  agencia: {
+  agency: {
     type: Number,
     require: true,
     min: 0
   },
-  conta: {
+  account: {
     type: Number,
     require: true,
     min: 0
