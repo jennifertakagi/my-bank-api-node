@@ -158,26 +158,48 @@ class AccountController {
   }
 
     /**
-   * Gets the smaller client considering your balance
+   * Gets the smallest clients considering your balance
    * @param {Object} req request object
    * @param {Object} res response object
    * @param {Function} next next function
   */
-  async getSmallerBalance(req, res, next) {
+  async getSmallestBalance(req, res, next) {
     try {
       let { limit } = req.body;
 
       validateRequestParams({limit});
 
-      const smallerBalance = await accountModel.find({}, {_id: 0, name: 0}).sort({balance: 1}).limit(limit)
+      const smallestBalance = await accountModel.find({}, {_id: 0, name: 0}).sort({balance: 1}).limit(limit)
 
-      res.send(`The smaller clients are: ${JSON.stringify(smallerBalance)}`);
+      res.send(`The smaller clients are: ${JSON.stringify(smallestBalance)}`);
 
-      logger.info(`GET /account/smallerBalance - ${JSON.stringify(smallerBalance)}`);
+      logger.info(`GET /account/smallestBalance - ${JSON.stringify(smallestBalance)}`);
     } catch (error) {
         next(error);
     }
   }
+
+  /**
+   * Gets the biggest clients considering your balance
+   * @param {Object} req request object
+   * @param {Object} res response object
+   * @param {Function} next next function
+  */
+ async getBiggestBalance(req, res, next) {
+  try {
+    let { limit } = req.body;
+
+    validateRequestParams({limit});
+
+    const biggestBalance = await accountModel.find({}, {_id: 0}).sort({balance: -1}).limit(limit)
+
+    res.send(`The smaller clients are: ${JSON.stringify(biggestBalance)}`);
+
+    logger.info(`GET /account/biggestBalance - ${JSON.stringify(biggestBalance)}`);
+  } catch (error) {
+      next(error);
+  }
+}
 }
 
 /**
